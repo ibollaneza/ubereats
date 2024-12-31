@@ -68,6 +68,11 @@
         .hidden-prize {
             display: none;
         }
+
+        .disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -80,14 +85,14 @@
     <div id="prize-container" style="display:none;">
         <h1>Select 3 Prizes</h1>
         <div class="prize-grid">
-            <div class="prize-box" onclick="revealPrize(this, 0)">Prize 1</div>
-            <div class="prize-box" onclick="revealPrize(this, 1)">Prize 2</div>
-            <div class="prize-box" onclick="revealPrize(this, 2)">Prize 3</div>
-            <div class="prize-box" onclick="revealPrize(this, 3)">Prize 4</div>
-            <div class="prize-box" onclick="revealPrize(this, 4)">Prize 5</div>
-            <div class="prize-box" onclick="revealPrize(this, 5)">Prize 6</div>
+            <div class="prize-box" onclick="revealPrize(this)">Prize 1</div>
+            <div class="prize-box" onclick="revealPrize(this)">Prize 2</div>
+            <div class="prize-box" onclick="revealPrize(this)">Prize 3</div>
+            <div class="prize-box" onclick="revealPrize(this)">Prize 4</div>
+            <div class="prize-box" onclick="revealPrize(this)">Prize 5</div>
+            <div class="prize-box" onclick="revealPrize(this)">Prize 6</div>
         </div>
-        <button id="show-codes" style="display:none;" onclick="showCodes()">Get Your Codes</button>
+        <button id="show-codes" class="disabled" onclick="showCodes()">Get Your Codes</button>
     </div>
 
     <div id="code-container" style="display:none;">
@@ -97,24 +102,42 @@
 
     <script>
         const prizes = [
-            { name: "$15 Discount", code: "DISCOUNT15" },
-            { name: "Free Delivery", code: "FREEDELIVERY" },
-            { name: "50% Off McDonald's", code: "MCD50" }
+            { name: "$15 Discount in UberEats", code: "DISCOUNT15" },
+            { name: "Free Delivery in UberEats", code: "FREEDELIVERY" },
+            { name: "50% Off McDonald's", code: "MCD50" },
+            { name: "20% Off Your Next Order", code: "ORDER20" },
+            { name: "Buy 1 Get 1 Free", code: "BOGO" },
+            { name: "$10 Cashback", code: "CASHBACK10" }
         ];
 
         let selectedPrizes = [];
+        let randomizedPrizes = [];
+
+        // Shuffle the prizes array to randomize the order
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
 
         function verifyWallet() {
             const wallet = document.getElementById("wallet").value;
-            if (wallet.length >= 32 && wallet.length <= 44) { // Simple Solana wallet check
-                document.getElementById("wallet-container").style.display = "none";
-                document.getElementById("prize-container").style.display = "block";
+            const walletContainer = document.getElementById("wallet-container");
+            const prizeContainer = document.getElementById("prize-container");
+
+            // Simple and basic validation for Solana wallet address
+            if (/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(wallet)) {
+                walletContainer.style.display = "none";
+                prizeContainer.style.display = "block";
+                shuffle(prizes); // Randomize the order of prizes
+                randomizedPrizes = [...prizes]; // Copy the shuffled prizes to a new array
             } else {
                 alert("Please enter a valid Solana wallet address.");
             }
         }
 
-        function revealPrize(box, index) {
+        function revealPrize(box) {
             if (selectedPrizes.length >= 3) {
                 alert("You can only select 3 prizes.");
                 return;
@@ -122,12 +145,13 @@
 
             if (!box.classList.contains("revealed")) {
                 box.classList.add("revealed");
-                const prize = prizes[selectedPrizes.length];
-                box.innerHTML = <strong>${prize.name}</strong>;
+                const prize = randomizedPrizes[selectedPrizes.length];
+                box.innerHTML = `<strong>${prize.name}</strong>`;
                 selectedPrizes.push(prize);
 
                 if (selectedPrizes.length === 3) {
                     document.getElementById("show-codes").style.display = "block";
+                    document.getElementById("show-codes").classList.remove("disabled");
                 }
             }
         }
@@ -139,7 +163,7 @@
             const codesDiv = document.getElementById("codes");
             codesDiv.innerHTML = "";
             selectedPrizes.forEach(prize => {
-                codesDiv.innerHTML += <p><strong>${prize.name}:</strong> ${prize.code}</p>;
+                codesDiv.innerHTML += `<p><strong>${prize.name}:</strong> ${prize.code}</p>`;
             });
         }
     </script>
