@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UberFi - Unlock Your Meal Rewards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: yellow;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1, p {
+            text-align: center;
+        }
+
+        .input-container, .roulette-container {
+            margin-top: 20px;
+        }
+
+        input {
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: yellow;
+            border: 2px solid yellow;
+            padding: 10px;
+            width: 300px;
+        }
+
+        button {
+            font-family: Arial, sans-serif;
+            background-color: yellow;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: darkgoldenrod;
+        }
+
+        .result {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .highlight-link {
+            color: yellow;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        a {
+            color: yellow;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: orange;
+        }
+
+        .roulette {
+            margin: 20px auto;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: conic-gradient(
+                yellow 0% 25%, 
+                black 25% 50%, 
+                yellow 50% 75%, 
+                black 75% 100%
+            );
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .roulette::before {
+            content: "";
+            width: 50px;
+            height: 50px;
+            background: black;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .pointer {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid yellow;
+            position: relative;
+            top: -150px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(1440deg); /* Spin for 4 full turns */
+            }
+        }
+
+        .spinning {
+            animation: spin 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+    </style>
+</head>
+<body>
+    <h1>UberFi</h1>
+    <p>Enter your wallet address to spin the wheel and win your $20 discount!</p>
+
+    <div class="input-container">
+        <input type="text" id="wallet" placeholder="Enter your Solana wallet">
+        <button onclick="verifyWallet()">Submit</button>
+    </div>
+
+    <div id="loading" class="loading">Validating your wallet...</div>
+
+    <div id="result" class="result"></div>
+
+    <div id="roulette" class="roulette-container" style="display: none;">
+        <div class="roulette" id="wheel"></div>
+        <div class="pointer"></div>
+        <button id="spin-button" onclick="spinWheel()">Spin the Wheel</button>
+    </div>
+
+    <script>
+        function verifyWallet() {
+            const walletInput = document.getElementById('wallet').value;
+            const walletPattern = /^[a-zA-Z0-9]{32,44}$/;
+
+            document.getElementById('result').innerHTML = "";
+            document.getElementById('loading').style.display = "block";
+
+            setTimeout(() => {
+                if (walletPattern.test(walletInput)) {
+                    document.getElementById('loading').style.display = "none";
+                    document.getElementById('roulette').style.display = "block";
+                    document.getElementById('result').innerHTML = 
+                        "<p>Wallet verified! Spin the wheel to reveal your prize!</p>";
+                } else {
+                    document.getElementById('loading').style.display = "none";
+                    document.getElementById('result').innerHTML = 
+                        "<p style='color: red;'>Invalid wallet address. Please try again.</p>";
+                }
+            }, 2000); // Simulate loading time
+        }
+
+        function spinWheel() {
+            const wheel = document.getElementById('wheel');
+            const spinButton = document.getElementById('spin-button');
+
+            spinButton.disabled = true; // Disable the button to prevent multiple spins
+            wheel.classList.add('spinning');
+
+            setTimeout(() => {
+                wheel.classList.remove('spinning');
+                document.getElementById('result').innerHTML = 
+                    `<p>Congratulations! You won: <strong>$20 Discount</strong></p>
+                    <p>Redeem your prize on Uber Eats: 
+                    <a href="https://www.ubereats.com" target="_blank" class="highlight-link">Uber Eats</a></p>`;
+                spinButton.disabled = false; // Enable the button again for another spin
+            }, 3000); // Spin duration matches the CSS animation time
+        }
+    </script>
+</body>
+</html>
