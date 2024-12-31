@@ -3,182 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UberFi - Unlock Your Meal Rewards</title>
+    <title>Prize Reveal</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: black;
-            color: yellow;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        h1, p {
+            font-family: 'Arial', sans-serif;
+            background-color: #22c55e;
+            color: #000;
             text-align: center;
+            padding: 20px;
         }
 
-        .input-container, .roulette-container {
-            margin-top: 20px;
+        h1 {
+            font-size: 2.5em;
+        }
+
+        #wallet-container, #prize-container, #code-container {
+            margin: 20px auto;
         }
 
         input {
-            font-family: Arial, sans-serif;
-            background-color: black;
-            color: yellow;
-            border: 2px solid yellow;
             padding: 10px;
+            font-size: 1em;
             width: 300px;
+            margin: 10px;
         }
 
         button {
-            font-family: Arial, sans-serif;
-            background-color: yellow;
-            color: black;
-            border: none;
+            background-color: #000;
+            color: #fff;
             padding: 10px 20px;
-            margin-top: 10px;
+            font-size: 1em;
+            border: none;
             cursor: pointer;
+            margin-top: 10px;
         }
 
         button:hover {
-            background-color: darkgoldenrod;
+            background-color: #333;
         }
 
-        .result {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .loading {
-            display: none;
-            margin-top: 20px;
-        }
-
-        .highlight-link {
-            color: yellow;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
-        a {
-            color: yellow;
-            text-decoration: none;
-        }
-
-        a:hover {
-            color: orange;
-        }
-
-        .roulette {
+        .prize-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 600px;
             margin: 20px auto;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: conic-gradient(
-                yellow 0% 25%, 
-                black 25% 50%, 
-                yellow 50% 75%, 
-                black 75% 100%
-            );
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
         }
 
-        .roulette::before {
-            content: "";
-            width: 50px;
-            height: 50px;
-            background: black;
-            border-radius: 50%;
-            position: absolute;
+        .prize-box {
+            background-color: #000;
+            color: #fff;
+            font-size: 1.2em;
+            padding: 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        .pointer {
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-bottom: 30px solid yellow;
-            position: relative;
-            top: -150px;
+        .prize-box:hover {
+            transform: scale(1.05);
+            background-color: #444;
         }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(1440deg); /* Spin for 4 full turns */
-            }
-        }
-
-        .spinning {
-            animation: spin 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        .hidden-prize {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <h1>UberFi</h1>
-    <p>Enter your wallet address to spin the wheel and win your $20 discount!</p>
-
-    <div class="input-container">
-        <input type="text" id="wallet" placeholder="Enter your Solana wallet">
+    <div id="wallet-container">
+        <h1>Enter Your Solana Wallet</h1>
+        <input type="text" id="wallet" placeholder="Enter your wallet address">
         <button onclick="verifyWallet()">Submit</button>
     </div>
 
-    <div id="loading" class="loading">Validating your wallet...</div>
+    <div id="prize-container" style="display:none;">
+        <h1>Select 3 Prizes</h1>
+        <div class="prize-grid">
+            <div class="prize-box" onclick="revealPrize(this, 0)">Prize 1</div>
+            <div class="prize-box" onclick="revealPrize(this, 1)">Prize 2</div>
+            <div class="prize-box" onclick="revealPrize(this, 2)">Prize 3</div>
+            <div class="prize-box" onclick="revealPrize(this, 3)">Prize 4</div>
+            <div class="prize-box" onclick="revealPrize(this, 4)">Prize 5</div>
+            <div class="prize-box" onclick="revealPrize(this, 5)">Prize 6</div>
+        </div>
+        <button id="show-codes" style="display:none;" onclick="showCodes()">Get Your Codes</button>
+    </div>
 
-    <div id="result" class="result"></div>
-
-    <div id="roulette" class="roulette-container" style="display: none;">
-        <div class="roulette" id="wheel"></div>
-        <div class="pointer"></div>
-        <button id="spin-button" onclick="spinWheel()">Spin the Wheel</button>
+    <div id="code-container" style="display:none;">
+        <h1>Your Discount Codes</h1>
+        <div id="codes"></div>
     </div>
 
     <script>
+        const prizes = [
+            { name: "$15 Discount", code: "DISCOUNT15" },
+            { name: "Free Delivery", code: "FREEDELIVERY" },
+            { name: "50% Off McDonald's", code: "MCD50" }
+        ];
+
+        let selectedPrizes = [];
+
         function verifyWallet() {
-            const walletInput = document.getElementById('wallet').value;
-            const walletPattern = /^[a-zA-Z0-9]{32,44}$/;
-
-            document.getElementById('result').innerHTML = "";
-            document.getElementById('loading').style.display = "block";
-
-            setTimeout(() => {
-                if (walletPattern.test(walletInput)) {
-                    document.getElementById('loading').style.display = "none";
-                    document.getElementById('roulette').style.display = "block";
-                    document.getElementById('result').innerHTML = 
-                        "<p>Wallet verified! Spin the wheel to reveal your prize!</p>";
-                } else {
-                    document.getElementById('loading').style.display = "none";
-                    document.getElementById('result').innerHTML = 
-                        "<p style='color: red;'>Invalid wallet address. Please try again.</p>";
-                }
-            }, 2000); // Simulate loading time
+            const wallet = document.getElementById("wallet").value;
+            if (wallet.length >= 32 && wallet.length <= 44) { // Simple Solana wallet check
+                document.getElementById("wallet-container").style.display = "none";
+                document.getElementById("prize-container").style.display = "block";
+            } else {
+                alert("Please enter a valid Solana wallet address.");
+            }
         }
 
-        function spinWheel() {
-            const wheel = document.getElementById('wheel');
-            const spinButton = document.getElementById('spin-button');
+        function revealPrize(box, index) {
+            if (selectedPrizes.length >= 3) {
+                alert("You can only select 3 prizes.");
+                return;
+            }
 
-            spinButton.disabled = true; // Disable the button to prevent multiple spins
-            wheel.classList.add('spinning');
+            if (!box.classList.contains("revealed")) {
+                box.classList.add("revealed");
+                const prize = prizes[selectedPrizes.length];
+                box.innerHTML = <strong>${prize.name}</strong>;
+                selectedPrizes.push(prize);
 
-            setTimeout(() => {
-                wheel.classList.remove('spinning');
-                document.getElementById('result').innerHTML = 
-                    `<p>Congratulations! You won: <strong>$20 Discount</strong></p>
-                    <p>Redeem your prize on Uber Eats: 
-                    <a href="https://www.ubereats.com" target="_blank" class="highlight-link">Uber Eats</a></p>`;
-                spinButton.disabled = false; // Enable the button again for another spin
-            }, 3000); // Spin duration matches the CSS animation time
+                if (selectedPrizes.length === 3) {
+                    document.getElementById("show-codes").style.display = "block";
+                }
+            }
+        }
+
+        function showCodes() {
+            document.getElementById("prize-container").style.display = "none";
+            document.getElementById("code-container").style.display = "block";
+
+            const codesDiv = document.getElementById("codes");
+            codesDiv.innerHTML = "";
+            selectedPrizes.forEach(prize => {
+                codesDiv.innerHTML += <p><strong>${prize.name}:</strong> ${prize.code}</p>;
+            });
         }
     </script>
 </body>
