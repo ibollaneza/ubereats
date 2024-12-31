@@ -11,21 +11,30 @@
             color: #000;
             text-align: center;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
 
         h1 {
-            font-size: 2.5em;
+            font-size: 2em;
+            margin: 20px 0;
         }
 
         #wallet-container, #prize-container, #code-container {
-            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
         }
 
         input {
             padding: 10px;
             font-size: 1em;
-            width: 300px;
-            margin: 10px;
+            width: calc(100% - 22px);
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
 
         button {
@@ -34,6 +43,7 @@
             padding: 10px 20px;
             font-size: 1em;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
             margin-top: 10px;
         }
@@ -44,7 +54,7 @@
 
         .prize-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             max-width: 600px;
             margin: 20px auto;
@@ -53,8 +63,8 @@
         .prize-box {
             background-color: #000;
             color: #fff;
-            font-size: 1.2em;
-            padding: 30px;
+            font-size: 1em;
+            padding: 20px;
             border-radius: 10px;
             cursor: pointer;
             transition: transform 0.2s;
@@ -73,16 +83,35 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
+
+        .full-height {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #show-codes {
+            margin-top: 20px;
+            display: none;
+            width: 100%;
+        }
+
+        #codes p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
-    <div id="wallet-container">
+    <div id="wallet-container" class="full-height">
         <h1>Enter Your Solana Wallet</h1>
         <input type="text" id="wallet" placeholder="Enter your wallet address">
         <button onclick="verifyWallet()">Submit</button>
     </div>
 
-    <div id="prize-container" style="display:none;">
+    <div id="prize-container" class="full-height" style="display:none;">
         <h1>Select 3 Prizes</h1>
         <div class="prize-grid">
             <div class="prize-box" onclick="revealPrize(this)">Prize 1</div>
@@ -95,7 +124,7 @@
         <button id="show-codes" class="disabled" onclick="showCodes()">Get Your Codes</button>
     </div>
 
-    <div id="code-container" style="display:none;">
+    <div id="code-container" class="full-height" style="display:none;">
         <h1>Your Discount Codes</h1>
         <div id="codes"></div>
     </div>
@@ -129,7 +158,9 @@
             // Simple and basic validation for Solana wallet address
             if (/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(wallet)) {
                 walletContainer.style.display = "none";
-                prizeContainer.style.display = "block";
+                prizeContainer.style.display = "flex";
+                prizeContainer.style.flexDirection = "column";
+                prizeContainer.style.alignItems = "center";
                 shuffle(prizes); // Randomize the order of prizes
                 randomizedPrizes = [...prizes]; // Copy the shuffled prizes to a new array
             } else {
@@ -150,15 +181,18 @@
                 selectedPrizes.push(prize);
 
                 if (selectedPrizes.length === 3) {
-                    document.getElementById("show-codes").style.display = "block";
-                    document.getElementById("show-codes").classList.remove("disabled");
+                    const showCodesButton = document.getElementById("show-codes");
+                    showCodesButton.style.display = "block";
+                    showCodesButton.classList.remove("disabled");
                 }
             }
         }
 
         function showCodes() {
             document.getElementById("prize-container").style.display = "none";
-            document.getElementById("code-container").style.display = "block";
+            document.getElementById("code-container").style.display = "flex";
+            document.getElementById("code-container").style.flexDirection = "column";
+            document.getElementById("code-container").style.alignItems = "center";
 
             const codesDiv = document.getElementById("codes");
             codesDiv.innerHTML = "";
