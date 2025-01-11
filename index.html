@@ -396,12 +396,7 @@
     // Phantom Wallet connection
     async function connectWallet() {
       try {
-        const isPhantomInstalled = window.solana && window.solana.isPhantom;
-        if (!isPhantomInstalled) {
-          alert("Phantom Wallet not found! Please install it from https://phantom.app/");
-          return;
-        }
-        const resp = await window.solana.connect();
+        const resp = await window.solana.connect({ onlyIfTrusted: false });
         console.log("Connected to wallet " + resp.publicKey.toString());
         connectWalletContainer.style.display = "none";
         mainContent.style.display = "flex";
@@ -411,15 +406,8 @@
       }
     }
 
-    // Check for Phantom Wallet
-    window.addEventListener("load", () => {
-      if (window.solana && window.solana.isPhantom) {
-        connectWalletBtn.onclick = connectWallet;
-      } else {
-        console.error("Phantom Wallet not found");
-        alert("Phantom Wallet not found! Please install it from https://phantom.app/");
-      }
-    });
+    // Set up connection event listener
+    connectWalletBtn.onclick = connectWallet;
   </script>
 
   <!-- Importar dependencias desde CDN -->
