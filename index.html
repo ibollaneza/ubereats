@@ -1,205 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prize Reveal</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #22c55e;
-            color: #000;
-            text-align: center;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>State Management in Frontend</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #fff;
+      color: #000;
+      font-family: "Consolas", "Courier New", monospace;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      padding: 20px;
+      background: #000;
+      color: #fff;
+      border-bottom: 2px solid #000;
+    }
+    .main-container {
+      display: flex;
+      flex: 1;
+      padding: 20px;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 300px;
+      padding: 15px;
+      background: #f0f0f0;
+      border: 1px solid #000;
+      border-radius: 8px;
+      overflow-y: auto;
+      margin-right: 20px;
+    }
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #000;
+      border-radius: 8px;
+    }
 
-        h1 {
-            font-size: 2em;
-            margin: 20px 0;
-        }
+    h1, h2, h3 {
+      margin: 10px 0;
+      text-transform: uppercase;
+    }
 
-        #wallet-container, #prize-container, #code-container {
-            width: 90%;
-            max-width: 600px;
-        }
+    .section-title {
+      margin-top: 15px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
 
-        input {
-            padding: 10px;
-            font-size: 1em;
-            width: calc(100% - 22px);
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+    button {
+      background-color: #000;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      margin-top: 10px;
+      cursor: pointer;
+      font-size: 1em;
+      border-radius: 4px;
+      transition: 0.2s;
+    }
+    button:hover {
+      background-color: #333;
+    }
 
-        button {
-            background-color: #000;
-            color: #fff;
-            padding: 10px 20px;
-            font-size: 1em;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+    select {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background: #e0e0e0;
+      color: #000;
+      border: 1px solid #000;
+      border-radius: 4px;
+      font-family: "Consolas", "Courier New", monospace;
+    }
 
-        button:hover {
-            background-color: #333;
-        }
+    .log-container {
+      background: #f5f5f5;
+      border: 1px solid #000;
+      border-radius: 4px;
+      padding: 15px;
+      overflow-y: auto;
+      height: 100%;
+      font-size: 0.9em;
+      white-space: pre-line;
+      font-family: "Consolas", "Courier New", monospace;
+    }
+    .log-entry {
+      margin-bottom: 10px;
+    }
 
-        .prize-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            max-width: 600px;
-            margin: 20px auto;
-        }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #000;
+      color: #fff;
+      border-top: 2px solid #000;
+      font-size: 0.8em;
+      font-family: "Consolas", "Courier New", monospace;
+      margin-top: auto;
+    }
 
-        .prize-box {
-            background-color: #000;
-            color: #fff;
-            font-size: 1em;
-            padding: 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .prize-box:hover {
-            transform: scale(1.05);
-            background-color: #444;
-        }
-
-        .hidden-prize {
-            display: none;
-        }
-
-        .disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        .full-height {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #show-codes {
-            margin-top: 20px;
-            display: none;
-            width: 100%;
-        }
-
-        #codes p {
-            font-size: 1.2em;
-            margin: 10px 0;
-        }
-    </style>
+    #connectWalletBtn {
+      background-color: #000;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 1em;
+      border-radius: 4px;
+      transition: 0.2s;
+      margin: 20px auto;
+      display: block;
+    }
+    #connectWalletBtn:hover {
+      background-color: #333;
+    }
+  </style>
 </head>
 <body>
-    <div id="wallet-container" class="full-height">
-        <h1>Enter Your Solana Wallet</h1>
-        <input type="text" id="wallet" placeholder="Enter your wallet address">
-        <button onclick="verifyWallet()">Submit</button>
+  <header>
+    <h1> State Management in Frontend</h1>
+    <p style="margin:0;">Choose the Best Technologies for Your Web Project</p>
+  </header>
+
+  <div id="connectWalletContainer" style="text-align: center; margin-top: 20px;">
+    <button id="connectWalletBtn">Connect to Phantom Wallet</button>
+  </div>
+
+  <div class="main-container" style="display: none;" id="mainContent">
+    <!-- Sidebar (Stack Selection) -->
+    <div class="sidebar" id="stackSelection">
+      <h3>Frontend Stack</h3>
+      <div class="section-title">Framework</div>
+      <div>
+        <select id="frontendFramework">
+          <option value="react">React</option>
+          <option value="vue">Vue.js</option>
+          <option value="svelte">Svelte</option>
+        </select>
+      </div>
+
+      <div class="section-title">CSS Preprocessor</div>
+      <div>
+        <select id="cssPreprocessor">
+          <option value="sass">Sass</option>
+          <option value="postcss">PostCSS</option>
+        </select>
+      </div>
+
+      <div class="section-title">CSS-in-JS</div>
+      <div>
+        <select id="cssInJs">
+          <option value="styled-components">Styled Components</option>
+          <option value="emotion">Emotion</option>
+        </select>
+      </div>
+
+      <div class="section-title">Web Components</div>
+      <div>
+        <select id="webComponents">
+          <option value="shadow-dom">Shadow DOM</option>
+          <option value="lit">Lit</option>
+        </select>
+      </div>
+
+      <h3>Backend Stack</h3>
+      <div class="section-title">Microservices</div>
+      <div>
+        <select id="microservices">
+          <option value="docker">Microservices with Docker</option>
+          <option value="kubernetes">Orchestrated with Kubernetes</option>
+        </select>
+      </div>
+
+      <div class="section-title">Framework</div>
+      <div>
+        <select id="backendFramework">
+          <option value="nestjs">NestJS</option>
+          <option value="nextjs">Next.js</option>
+        </select>
+      </div>
+
+      <div class="section-title">GraphQL</div>
+      <div>
+        <select id="graphql">
+          <option value="apollo">Apollo</option>
+          <option value="relay">Relay</option>
+        </select>
+      </div>
+
+      <div class="section-title">Serverless Functions</div>
+      <div>
+        <select id="serverless">
+          <option value="aws-lambda">AWS Lambda</option>
+          <option value="vercel">Vercel</option>
+          <option value="netlify">Netlify Functions</option>
+        </select>
+      </div>
+
+      <button id="saveStackBtn">Save Stack</button>
     </div>
 
-    <div id="prize-container" class="full-height" style="display:none;">
-        <h1>Select 3 Prizes</h1>
-        <div class="prize-grid">
-            <div class="prize-box" onclick="revealPrize(this)">Prize 1</div>
-            <div class="prize-box" onclick="revealPrize(this)">Prize 2</div>
-            <div class="prize-box" onclick="revealPrize(this)">Prize 3</div>
-            <div class="prize-box" onclick="revealPrize(this)">Prize 4</div>
-            <div class="prize-box" onclick="revealPrize(this)">Prize 5</div>
-            <div class="prize-box" onclick="revealPrize(this)">Prize 6</div>
+    <!-- Content (Log) -->
+    <div class="content" id="selectionLog">
+      <h2>Selection Log</h2>
+      <div id="logContainer" class="log-container"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Tech Stack Selection. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Importaciones de Redux Toolkit
+    const { configureStore, createSlice } = window.RTK;
+    const { Provider, useSelector, useDispatch } = window.ReactRedux;
+    const { QueryClient, QueryClientProvider, useQuery } = window.ReactQuery;
+    const { useState, useCallback, memo } = window.React;
+
+    // Slice de Redux para el contador
+    const counterSlice = createSlice({
+      name: 'counter',
+      initialState: { value: 0 },
+      reducers: {
+        increment: state => { state.value += 1; },
+        decrement: state => { state.value -= 1; },
+        incrementByAmount: (state, action) => { state.value += action.payload; },
+      },
+    });
+    const { increment, decrement, incrementByAmount } = counterSlice.actions;
+
+    // Configuración del store de Redux
+    const store = configureStore({
+      reducer: {
+        counter: counterSlice.reducer,
+      },
+    });
+
+    // Componente de contador optimizado
+    const Counter = memo(() => {
+      const count = useSelector((state) => state.counter.value);
+      const dispatch = useDispatch();
+
+      const handleIncrement = useCallback(() => { dispatch(increment()); }, [dispatch]);
+      const handleDecrement = useCallback(() => { dispatch(decrement()); }, [dispatch]);
+      const handleIncrementByAmount = useCallback(() => { dispatch(incrementByAmount(5)); }, [dispatch]);
+
+      return (
+        <div>
+          <h1>Count: {count}</h1>
+          <button onClick={handleIncrement}>Increment</button>
+          <button onClick={handleDecrement}>Decrement</button>
+          <button onClick={handleIncrementByAmount}>Increment by 5</button>
         </div>
-        <button id="show-codes" class="disabled" onclick="showCodes()">Get Your Codes</button>
-    </div>
+      );
+    });
 
-    <div id="code-container" class="full-height" style="display:none;">
-        <h1>Your Discount Codes</h1>
-        <div id="codes"></div>
-    </div>
+    // Componente principal de la aplicación
+    const App = () => {
+      return (
+        <Provider store={store}>
+          <div className="App">
+            <header className="App-header">
+              <h1>Tech Stack Selection</h1>
+            </header>
+            <Counter />
+          </div>
+        </Provider>
+      );
+    };
 
-    <script>
-        const prizes = [
-            { name: "$15 Discount in UberEats", code: "DISCOUNT15" },
-            { name: "Free Delivery in UberEats", code: "FREEDELIVERY" },
-            { name: "50% Off McDonald's", code: "MCD50" },
-            { name: "20% Off Your Next Order", code: "ORDER20" },
-            { name: "Buy 1 Get 1 Free", code: "BOGO" },
-            { name: "$10 Cashback", code: "CASHBACK10" }
-        ];
+    // Renderizado de la aplicación
+    const queryClient = new QueryClient();
+    const root = document.createElement('div');
+    root.id = 'root';
+    document.body.appendChild(root);
 
-        let selectedPrizes = [];
-        let randomizedPrizes = [];
+    ReactDOM.render(
+      <React.StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </React.StrictMode>,
+      document.getElementById('root')
+    );
 
-        // Shuffle the prizes array to randomize the order
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
+    // DOM Elements
+    const connectWalletBtn = document.getElementById("connectWalletBtn");
+    const connectWalletContainer = document.getElementById("connectWalletContainer");
+    const mainContent = document.getElementById("mainContent");
+    const saveStackBtn = document.getElementById("saveStackBtn");
+    const logContainer = document.getElementById("logContainer");
 
-        function verifyWallet() {
-            const wallet = document.getElementById("wallet").value;
-            const walletContainer = document.getElementById("wallet-container");
-            const prizeContainer = document.getElementById("prize-container");
+    // Stack Selection
+    const frontendFramework = document.getElementById("frontendFramework");
+    const cssPreprocessor = document.getElementById("cssPreprocessor");
+    const cssInJs = document.getElementById("cssInJs");
+    const webComponents = document.getElementById("webComponents");
+    const microservices = document.getElementById("microservices");
+    const backendFramework = document.getElementById("backendFramework");
+    const graphql = document.getElementById("graphql");
+    const serverless = document.getElementById("serverless");
 
-            // Simple and basic validation for Solana wallet address
-            if (/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(wallet)) {
-                walletContainer.style.display = "none";
-                prizeContainer.style.display = "flex";
-                prizeContainer.style.flexDirection = "column";
-                prizeContainer.style.alignItems = "center";
-                shuffle(prizes); // Randomize the order of prizes
-                randomizedPrizes = [...prizes]; // Copy the shuffled prizes to a new array
-            } else {
-                alert("Please enter a valid Solana wallet address.");
-            }
-        }
+    // Technical terms array
+    const technicalTerms = [
+      "Scalability",
+      "Latency",
+      "Throughput",
+      "Load Balancing",
+      "Containerization",
+      "Microservices",
+      "Serverless",
+      "GraphQL",
+      "REST API",
+      "WebAssembly",
+      "Edge Computing",
+      "CDN",
+      "CI/CD",
+      "DevOps",
+      "Observability",
+      "Telemetry",
+      "Cache Invalidation",
+      "Session Management",
+      "Data Sharding",
+      "Event Sourcing"
+    ];
 
-        function revealPrize(box) {
-            if (selectedPrizes.length >= 3) {
-                alert("You can only select 3 prizes.");
-                return;
-            }
+    // Event Listeners
+    saveStackBtn.addEventListener("click", () => {
+      const selectedFrontendFramework = frontendFramework.value;
+      const selectedCssPreprocessor = cssPreprocessor.value;
+      const selectedCssInJs = cssInJs.value;
+      const selectedWebComponents = webComponents.value;
+      const selectedMicroservices = microservices.value;
+      const selectedBackendFramework = backendFramework.value;
+      const selectedGraphql = graphql.value;
+      const selectedServerless = serverless.value;
 
-            if (!box.classList.contains("revealed")) {
-                box.classList.add("revealed");
-                const prize = randomizedPrizes[selectedPrizes.length];
-                box.innerHTML = `<strong>${prize.name}</strong>`;
-                selectedPrizes.push(prize);
+      const logEntry = `
+        Frontend Stack:
+        - Framework: ${selectedFrontendFramework}
+        - CSS Preprocessor: ${selectedCssPreprocessor}
+        - CSS-in-JS: ${selectedCssInJs}
+        - Web Components: ${selectedWebComponents}
+        
+        Backend Stack:
+        - Microservices: ${selectedMicroservices}
+        - Framework: ${selectedBackendFramework}
+        - GraphQL: ${selectedGraphql}
+        - Serverless Functions: ${selectedServerless}
+      `;
 
-                if (selectedPrizes.length === 3) {
-                    const showCodesButton = document.getElementById("show-codes");
-                    showCodesButton.style.display = "block";
-                    showCodesButton.classList.remove("disabled");
-                }
-            }
-        }
+      appendLog(logEntry);
+      appendTechnicalTerms();
+    });
 
-        function showCodes() {
-            document.getElementById("prize-container").style.display = "none";
-            document.getElementById("code-container").style.display = "flex";
-            document.getElementById("code-container").style.flexDirection = "column";
-            document.getElementById("code-container").style.alignItems = "center";
+    function appendTechnicalTerms() {
+      const terms = generateTechnicalTerms();
+      const div = document.createElement("div");
+      div.className = "log-entry";
+      div.textContent = terms;
+      logContainer.appendChild(div);
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
 
-            const codesDiv = document.getElementById("codes");
-            codesDiv.innerHTML = "";
-            selectedPrizes.forEach(prize => {
-                codesDiv.innerHTML += `<p><strong>${prize.name}:</strong> ${prize.code}</p>`;
-            });
-        }
-    </script>
+    function generateTechnicalTerms() {
+      let terms = '';
+      for (let i = 0; i < 10; i++) {
+        const randomIndex = Math.floor(Math.random() * technicalTerms.length);
+        const randomValue = Math.floor(Math.random() * 100);
+        terms += `${technicalTerms[randomIndex]}: ${randomValue}\n`;
+      }
+      return terms;
+    }
+
+    function appendLog(text) {
+      const div = document.createElement("div");
+      div.className = "log-entry";
+      div.textContent = text;
+      logContainer.appendChild(div);
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    // Phantom Wallet connection
+    async function connectWallet() {
+      try {
+        const resp = await window.solana.connect();
+        console.log("Connected to wallet " + resp.publicKey.toString());
+        connectWalletContainer.style.display = "none";
+        mainContent.style.display = "flex";
+      } catch (err) {
+        console.error("Wallet connection failed", err);
+      }
+    }
+
+    // Check for Phantom Wallet
+    window.addEventListener("load", () => {
+      if (window.solana && window.solana.isPhantom) {
+        connectWalletBtn.onclick = connectWallet;
+      } else {
+        console.error("Phantom Wallet not found");
+      }
+    });
+  </script>
+
+  <!-- Importar dependencias desde CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.1.1/redux.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/7.2.4/react-redux.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/@reduxjs/toolkit/1.6.2/redux-toolkit.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-query/3.13.0/react-query.production.min.js"></script>
 </body>
 </html>
