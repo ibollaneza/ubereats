@@ -226,8 +226,8 @@
     // Importaciones de Redux Toolkit
     const { configureStore, createSlice } = window.RTK;
     const { Provider, useSelector, useDispatch } = window.ReactRedux;
-    const { QueryClient, QueryClientProvider, useQuery } = window.ReactQuery;
-    const { useState, useCallback, memo } = window.React;
+    const { QueryClient, QueryClientProvider } = window.ReactQuery;
+    const { useCallback, memo } = window.React;
 
     // Slice de Redux para el contador
     const counterSlice = createSlice({
@@ -396,12 +396,18 @@
     // Phantom Wallet connection
     async function connectWallet() {
       try {
+        const isPhantomInstalled = window.solana && window.solana.isPhantom;
+        if (!isPhantomInstalled) {
+          alert("Phantom Wallet not found! Please install it from https://phantom.app/");
+          return;
+        }
         const resp = await window.solana.connect();
         console.log("Connected to wallet " + resp.publicKey.toString());
         connectWalletContainer.style.display = "none";
         mainContent.style.display = "flex";
       } catch (err) {
         console.error("Wallet connection failed", err);
+        alert("Wallet connection failed: " + err.message);
       }
     }
 
@@ -411,6 +417,7 @@
         connectWalletBtn.onclick = connectWallet;
       } else {
         console.error("Phantom Wallet not found");
+        alert("Phantom Wallet not found! Please install it from https://phantom.app/");
       }
     });
   </script>
