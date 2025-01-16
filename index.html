@@ -2,65 +2,96 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>State Management in Frontend</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edge Computing and CDNs</title>
   <style>
-    body {
+    /* RESET BÁSICO */
+    * {
       margin: 0;
-      background-color: #fff;
-      color: #000;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* FUENTE Y COLORES PRINCIPALES */
+    body {
       font-family: "Consolas", "Courier New", monospace;
+      background-color: #000000;
+      color: #00ff87; /* Verde neón */
       display: flex;
       flex-direction: column;
       min-height: 100vh;
     }
+
+    /* ENCABEZADO */
     header {
       text-align: center;
       padding: 20px;
-      background: #000;
-      color: #fff;
-      border-bottom: 2px solid #000;
+      background: #000000;
+      border-bottom: 2px solid #00ff87;
     }
+    header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+    header p {
+      margin: 0;
+      font-size: 1rem;
+      color: #a5ffce; /* Un tono más claro */
+    }
+
+    /* CONTENEDOR PRINCIPAL */
     .main-container {
       display: flex;
       flex: 1;
       padding: 20px;
       overflow: hidden;
     }
+
+    /* SIDEBAR */
     .sidebar {
       width: 300px;
       padding: 15px;
-      background: #f0f0f0;
-      border: 1px solid #000;
+      background: #0a0a0a;
+      border: 1px solid #00ff87;
       border-radius: 8px;
       overflow-y: auto;
       margin-right: 20px;
     }
-    .content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-      background: #fff;
-      border: 1px solid #000;
-      border-radius: 8px;
-    }
-
-    h1, h2, h3 {
+    .sidebar h3 {
       margin: 10px 0;
+      font-weight: bold;
       text-transform: uppercase;
+      color: #00ff87;
     }
-
     .section-title {
       margin-top: 15px;
       margin-bottom: 10px;
       font-weight: bold;
       text-transform: uppercase;
+      color: #00ff87;
     }
 
+    /* CONTENIDO PRINCIPAL (LOG) */
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      background: #0a0a0a;
+      border: 1px solid #00ff87;
+      border-radius: 8px;
+    }
+    .content h2 {
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      color: #00ff87;
+    }
+
+    /* BOTONES Y SELECTS */
     button {
-      background-color: #000;
-      color: #fff;
+      background-color: #00ff87;
+      color: #000000;
       border: none;
       padding: 10px 15px;
       margin-top: 10px;
@@ -68,51 +99,58 @@
       font-size: 1em;
       border-radius: 4px;
       transition: 0.2s;
+      font-weight: bold;
     }
     button:hover {
-      background-color: #333;
+      background-color: #00cc6a;
     }
-
     select {
       width: 100%;
       margin-top: 10px;
       padding: 10px;
-      background: #e0e0e0;
-      color: #000;
-      border: 1px solid #000;
+      background: #111111;
+      color: #00ff87;
+      border: 1px solid #00ff87;
       border-radius: 4px;
       font-family: "Consolas", "Courier New", monospace;
+      font-weight: bold;
     }
 
+    /* CONTENEDOR DE LOGS */
     .log-container {
-      background: #f5f5f5;
-      border: 1px solid #000;
+      background: #111111;
+      border: 1px solid #00ff87;
       border-radius: 4px;
       padding: 15px;
       overflow-y: auto;
       height: 100%;
       font-size: 0.9em;
       white-space: pre-line;
-      font-family: "Consolas", "Courier New", monospace;
+      color: #00ff87;
     }
     .log-entry {
       margin-bottom: 10px;
     }
 
+    /* FOOTER */
     footer {
       text-align: center;
       padding: 15px;
-      background: #000;
-      color: #fff;
-      border-top: 2px solid #000;
+      background: #000000;
+      border-top: 2px solid #00ff87;
       font-size: 0.8em;
-      font-family: "Consolas", "Courier New", monospace;
+      color: #a5ffce;
       margin-top: auto;
     }
 
+    /* BOTÓN CONNECT WALLET */
+    #connectWalletContainer {
+      text-align: center;
+      margin-top: 20px;
+    }
     #connectWalletBtn {
-      background-color: #000;
-      color: #fff;
+      background-color: #00ff87;
+      color: #000000;
       border: none;
       padding: 10px 15px;
       cursor: pointer;
@@ -121,22 +159,25 @@
       transition: 0.2s;
       margin: 20px auto;
       display: block;
+      font-weight: bold;
     }
     #connectWalletBtn:hover {
-      background-color: #333;
+      background-color: #00cc6a;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1> State Management in Frontend</h1>
-    <p style="margin:0;">Choose the Best Technologies for Your Web Project</p>
+    <h1>EDGE COMPUTING AND CDNS</h1>
+    <p>Choose the Best Technologies for Your Web Project</p>
   </header>
 
-  <div id="connectWalletContainer" style="text-align: center; margin-top: 20px;">
+  <!-- Botón de conexión a la Wallet -->
+  <div id="connectWalletContainer">
     <button id="connectWalletBtn">Connect to Phantom Wallet</button>
   </div>
 
+  <!-- Contenido principal, se oculta hasta conectar la wallet -->
   <div class="main-container" style="display: none;" id="mainContent">
     <!-- Sidebar (Stack Selection) -->
     <div class="sidebar" id="stackSelection">
@@ -178,7 +219,7 @@
       <div class="section-title">Microservices</div>
       <div>
         <select id="microservices">
-          <option value="docker">Microservices with Docker</option>
+          <option value="docker">Microservices in Docker</option>
           <option value="kubernetes">Orchestrated with Kubernetes</option>
         </select>
       </div>
@@ -219,83 +260,10 @@
   </div>
 
   <footer>
-    <p>© 2025 State Management Selection. All rights reserved.</p>
+    <p>© 2025 Tech Stack Selection. All rights reserved.</p>
   </footer>
 
   <script>
-    // Importaciones de Redux Toolkit
-    const { configureStore, createSlice } = window.RTK;
-    const { Provider, useSelector, useDispatch } = window.ReactRedux;
-    const { QueryClient, QueryClientProvider } = window.ReactQuery;
-    const { useCallback, memo } = window.React;
-
-    // Slice de Redux para el contador
-    const counterSlice = createSlice({
-      name: 'counter',
-      initialState: { value: 0 },
-      reducers: {
-        increment: state => { state.value += 1; },
-        decrement: state => { state.value -= 1; },
-        incrementByAmount: (state, action) => { state.value += action.payload; },
-      },
-    });
-    const { increment, decrement, incrementByAmount } = counterSlice.actions;
-
-    // Configuración del store de Redux
-    const store = configureStore({
-      reducer: {
-        counter: counterSlice.reducer,
-      },
-    });
-
-    // Componente de contador optimizado
-    const Counter = memo(() => {
-      const count = useSelector((state) => state.counter.value);
-      const dispatch = useDispatch();
-
-      const handleIncrement = useCallback(() => { dispatch(increment()); }, [dispatch]);
-      const handleDecrement = useCallback(() => { dispatch(decrement()); }, [dispatch]);
-      const handleIncrementByAmount = useCallback(() => { dispatch(incrementByAmount(5)); }, [dispatch]);
-
-      return (
-        <div>
-          <h1>Count: {count}</h1>
-          <button onClick={handleIncrement}>Increment</button>
-          <button onClick={handleDecrement}>Decrement</button>
-          <button onClick={handleIncrementByAmount}>Increment by 5</button>
-        </div>
-      );
-    });
-
-    // Componente principal de la aplicación
-    const App = () => {
-      return (
-        <Provider store={store}>
-          <div className="App">
-            <header className="App-header">
-              <h1>State Management in Frontend</h1>
-            </header>
-            <Counter />
-          </div>
-        </Provider>
-      );
-    };
-
-    // Renderizado de la aplicación
-    const queryClient = new QueryClient();
-    const root = document.createElement('div');
-    root.id = 'root';
-    document.body.appendChild(root);
-
-    ReactDOM.render(
-      <React.StrictMode>
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
-      </React.StrictMode>,
-      document.getElementById('root')
-    );
-
     // DOM Elements
     const connectWalletBtn = document.getElementById("connectWalletBtn");
     const connectWalletContainer = document.getElementById("connectWalletContainer");
@@ -325,8 +293,8 @@
       "GraphQL",
       "REST API",
       "WebAssembly",
-      "Edge Computing",
-      "CDN",
+      "Edge Functions",
+      "Advanced Cache Invalidation",
       "CI/CD",
       "DevOps",
       "Observability",
@@ -337,7 +305,7 @@
       "Event Sourcing"
     ];
 
-    // Event Listeners
+    // Función para guardar selección y mostrar en el log
     saveStackBtn.addEventListener("click", () => {
       const selectedFrontendFramework = frontendFramework.value;
       const selectedCssPreprocessor = cssPreprocessor.value;
@@ -366,6 +334,7 @@
       appendTechnicalTerms();
     });
 
+    // Muestra 10 términos técnicos aleatorios con valores
     function appendTechnicalTerms() {
       const terms = generateTechnicalTerms();
       const div = document.createElement("div");
@@ -374,7 +343,6 @@
       logContainer.appendChild(div);
       logContainer.scrollTop = logContainer.scrollHeight;
     }
-
     function generateTechnicalTerms() {
       let terms = '';
       for (let i = 0; i < 10; i++) {
@@ -384,7 +352,6 @@
       }
       return terms;
     }
-
     function appendLog(text) {
       const div = document.createElement("div");
       div.className = "log-entry";
@@ -393,29 +360,31 @@
       logContainer.scrollTop = logContainer.scrollHeight;
     }
 
-    // Phantom Wallet connection
+    // Conexión con Phantom Wallet
     async function connectWallet() {
       try {
+        // Solicitar conexión a la wallet:
         const resp = await window.solana.connect({ onlyIfTrusted: false });
-        console.log("Connected to wallet " + resp.publicKey.toString());
+        
+        // Si se conecta correctamente, resp.publicKey tendrá la clave pública:
+        console.log("Connected to wallet:", resp.publicKey.toString());
+        
+        // Ocultamos el botón de conectar y mostramos el contenido principal
         connectWalletContainer.style.display = "none";
         mainContent.style.display = "flex";
       } catch (err) {
         console.error("Wallet connection failed", err);
-        alert("Wallet connection failed: " + err.message);
       }
     }
 
-    // Set up connection event listener
-    connectWalletBtn.onclick = connectWallet;
+    // Verificar si Phantom está disponible
+    window.addEventListener("load", () => {
+      if (window.solana && window.solana.isPhantom) {
+        connectWalletBtn.onclick = connectWallet;
+      } else {
+        console.error("Phantom Wallet not found. Please install or enable Phantom.");
+      }
+    });
   </script>
-
-  <!-- Importar dependencias desde CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.1.1/redux.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/7.2.4/react-redux.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/@reduxjs/toolkit/1.6.2/redux-toolkit.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-query/3.13.0/react-query.production.min.js"></script>
 </body>
 </html>
